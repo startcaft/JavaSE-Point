@@ -1,8 +1,13 @@
 package com.startcaft.reflect.test;
 
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Properties;
 
 import org.junit.Test;
 
@@ -95,5 +100,36 @@ public class TestReflect {
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		Class clazz5 = classLoader.loadClass("com.startcaft.reflect.Person");
 		System.out.println(clazz5.getName());
+	}
+	
+	
+	/**
+	 * ClassLoader 类加载器:
+	 * 引导加载器：加载Java 核心库，无法获取
+	 * 扩展加载器：加载Java 扩展库
+	 * 系统加载器：加载Java应用的类路径(CLASSPATH)下的java类
+	 * @throws IOException 
+	 */
+	@Test
+	public void testClassLoader() throws IOException{
+		
+		ClassLoader loader1 = ClassLoader.getSystemClassLoader();//系统加载器
+		System.out.println(loader1);
+		
+		ClassLoader loader2 = loader1.getParent();//扩展加载器
+		System.out.println(loader2);
+		
+		ClassLoader loader3 = loader2.getParent();//引导加载器，无法获取到
+		System.out.println(loader3);
+		
+		
+		//需要掌握以下的点，可以通过ClassLoader来获取指定文件夹下的文件
+		//1,加载classpath下任意文件夹下的文件
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream("com\\startcaft\\reflect\\jdbc.properties");
+		//2，加载当前工程下的文件
+		//FileInputStream is = new FileInputStream(new File("jdbc.properties"));
+		Properties prop = new Properties();
+		prop.load(is);
+		System.out.println(prop);
 	}
 }
