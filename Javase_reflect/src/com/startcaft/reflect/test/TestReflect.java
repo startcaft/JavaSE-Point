@@ -66,4 +66,34 @@ public class TestReflect {
 		Class clazz = p.getClass();
 		System.out.println(clazz);
 	}
+	
+	/**
+	 * 获取java.lang.Class的几种方式
+	 */
+	@Test
+	public void testGetClassObject() throws ClassNotFoundException{
+		
+		//1，调用运行时类本身的.class属性
+		Class clazz1 = Person.class;
+		System.out.println(clazz1.getName());
+		
+		Class clazz2 = String.class;
+		System.out.println(clazz2.getName());
+		
+		
+		//2，通过运行时类对象的getClass()方法获取(该方法从Object类继承而来)
+		Person person = new Person();
+		Class clazz3 = person.getClass();
+		System.out.println(clazz3.getName());
+		
+		//3，通过Class类的静态方法forName(String className)，必须提供类的全类名
+		Class clazz4 = Class.forName("com.startcaft.reflect.Person");
+		System.out.println(clazz4.getName());
+		
+		
+		//4，通过ClassLoader类加载器
+		ClassLoader classLoader = this.getClass().getClassLoader();
+		Class clazz5 = classLoader.loadClass("com.startcaft.reflect.Person");
+		System.out.println(clazz5.getName());
+	}
 }
