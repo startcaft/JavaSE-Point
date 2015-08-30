@@ -51,4 +51,19 @@ public class TestReflect {
 		Method showMethod = clazz.getMethod("show", String.class);
 		showMethod.invoke(p, "中国");
 	}
+	
+	/**
+	 * java.lang.Class : 它是java反射的源头；
+	 * 我们创建的每一个类，通过编译(javax.ex)，生成对应的.class文件(java字节码);
+	 * 之后使用java.exe加载(jvm的类加载器完成).class文件；
+	 * .class文件被加载到内存以后，就是一个运行时类，存放在【缓存区】，那么运行时类本身就是一个Class类的实例；
+	 * 【一个运行时类只加载一次！】;
+	 */
+	@Test
+	public void testClass(){
+		
+		Person p = new Person();
+		Class clazz = p.getClass();
+		System.out.println(clazz);
+	}
 }
