@@ -18,7 +18,7 @@ public class TestReflect {
 	
 	//在使用反射之前
 	@Test
-	public void testBeforeReflect(){
+	public void testBeforeReflect() throws Exception{
 		
 		Person person = new Person();
 		person.setAge(20);

@@ -1,5 +1,7 @@
 package com.startcaft.reflect.test;
 
+import java.lang.reflect.Constructor;
+
 import org.junit.Test;
 
 import com.startcaft.reflect.Person;
@@ -21,4 +23,16 @@ public class TestConstructor {
 		Person p = (Person) obj;
 		System.out.println(p);
 	}	
+	
+	@Test
+	public void test2() throws ClassNotFoundException{
+		String className = "com.startcaft.reflect.Person";
+		Class clazz = Class.forName(className);
+		
+		//1.getDeclaredConstructors()方法获取运行时定义的所有的构造器
+		Constructor[] constructors = clazz.getDeclaredConstructors();
+		for(Constructor c: constructors){
+			System.out.println(c.getName());
+		}
+	}
 }

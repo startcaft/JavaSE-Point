@@ -1,6 +1,7 @@
 package com.startcaft.reflect;
 
-public class Person {
+@MyAnnotation(value="startcaft")
+public class Person extends Parent<String> implements Comparable,MyInterface {
 	
 	private String name;
 	
@@ -41,7 +42,22 @@ public class Person {
 		System.out.println("hello,我是 :" + this.name);
 	}
 	
-	public void show(String nv){
+	@MyAnnotation(value="abc123")
+	public void show(String nv) throws Exception{
 		System.out.println("我来自:" + nv);
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	private void display(){
+		
+	}
+	
+	class Bird{
+		
 	}
 }
