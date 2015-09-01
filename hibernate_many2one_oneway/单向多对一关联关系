@@ -1,0 +1,15 @@
+Hibernate单向对多一关联关系：
+
+实现步骤
+Ⅰ ，在many方设置one方的一个对象引用的属性；
+
+Ⅱ，在one方对象的属性上使用:
+	1,@ManyToOne进行多对一的注解；
+	2,@JoinColumn(name="外键列字段")注解；
+	***如果不使用@JoinColumn注解，则会生成中间表，而不会在一的一方的映射表中生成外键列；
+	***@ManyToOne注解的fetch的属性默认为FetchType.EAGER(立即加载)
+	
+Ⅲ，单向一对多，维护关联关系的是many方，在Insert的时，如果one放的引用对象没有保存，则无法保存many放的对象；
+	***persistent状态的对象不能引用Transient状态的对象；
+	***利用Cascade属性是解决TransientObjectException一场的一种手段；
+	***注意：：：Cascade只是帮我们省去了硬编码的麻烦而已，不要把它的作用过度放大；
