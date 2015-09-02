@@ -61,7 +61,7 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 		
 		Query query = this.getSession().createQuery(hql);
 		for(int i=0;params != null && i< params.length;i++){
-			query.setParameter(i, params);
+			query.setParameter(i, params[i]);
 		}
 		
 		return query.list();
@@ -72,7 +72,7 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 			Object... params) {
 		Query query = this.getSession().createQuery(hql);
 		for(int i=0;params != null && i< params.length;i++){
-			query.setParameter(i, params);
+			query.setParameter(i, params[i]);
 		}
 		
 		return query.list();

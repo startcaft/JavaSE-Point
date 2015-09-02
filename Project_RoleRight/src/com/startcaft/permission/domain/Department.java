@@ -19,7 +19,7 @@ import javax.persistence.Table;
 @Table(name="tb_department")
 public class Department {
 	
-	private int id;
+	private Integer id;
 	
 	private Department parent;//父节点
 	
@@ -36,11 +36,11 @@ public class Department {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	
