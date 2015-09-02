@@ -2,13 +2,15 @@ package com.startcaft.permission.servlet;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -37,24 +39,32 @@ public class DepartServlet extends HttpServlet {
 		Integer appId = 0;
 		try {
 			appId = Integer.valueOf(id);
-//			request.setAttribute("departs", appService.getAppById(appId).getDepartments());
-//			request.getRequestDispatcher("/Depart/index.jsp").forward(request, response);
 			List<Department> roots = departService.getRootDepartmentByApp(appId);
-			System.out.println(roots);
+			response.setHeader("Content-type", "text/xml;charset=UTF-8"); 
+			String xml = this.writerRootDepartXml(response, roots);
+			response.getWriter().println(xml);
 		} catch (Exception e) {
 			response.getWriter().println("no support app");
 		}
 	}
 	
-	
-	private void println(Department depart,int level){
-		String preStr = "";
-		for(int i=0;i<level;i++){
-			 preStr += "|----";
+	private String writerRootDepartXml(HttpServletResponse response,List<Department> list) throws ServletException, IOException{
+		
+		Document document  = DocumentHelper.createDocument();
+		//根节点---departments
+		Element root = document.addElement("departments");
+		for (Department department : list) {
+			
+			//一级节点---depart
+			Element depart = root.addElement("depart");
+			
+			Element id = depart.addElement("id");
+			id.setText(department.getId().toString());
+			
+			Element name = depart.addElement("name");
+			name.setText(department.getName());
 		}
-		System.out.println(preStr + depart.getName());
-		for(Department cDepart : depart.getChildren()){
-			println(cDepart,level + 1);
-		}
+		
+		return document.asXML();
 	}
 }
