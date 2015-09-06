@@ -1,0 +1,6 @@
+Servlet可以作为MVC的中央控制器，
+Filter也可以作为MVC的中央控制器。
+
+那么相对于Servlet来,说，Filter作为中央控制器有什么区别：
+
+Servlet API中有的 Filter API中也有，Filter还可以对所有资源进行拦截。就这一点Filter已经够牛逼了
