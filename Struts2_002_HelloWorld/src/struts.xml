@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<!-- struts2的配置文件，以structs为根节点 -->
+<struts>
+    <!-- 
+    	package元素 代表了包，其作用类似于java中的package，一般一个功能模块对应一个package
+    	name属性：方便其他的包进行引用
+    	extends属性：它继承了struts-default这个包的所有信息。他为我们提供了绝大部分的功能；
+    		可以在struts2-core的jar包中的struts-default.xml文件中找到这个包。
+    		
+    	namespace属性：默认属性，默认值/
+     -->
+    <package name="helloworld" extends="struts-default" namespace="/">
+        
+        <!-- 
+        	action元素 可以理解为一个请求，请求就有请求目标，以及请求结果
+        	name属性：把request的servletPath属性去除掉 / 和扩展名，就是请求的目标。
+         -->
+        <action name="product_input">
+            
+            <!-- 
+            	result元素 代表一个请求结果
+             -->
+            <result>/WEB-INF/pages/product_input.jsp</result>
+        </action>
+        
+        <action name="product_save" class="com.startcaft.structs2.bean.Product"
+            method="save">
+            <result name="details">/WEB-INF/pages/product_save.jsp</result>
+        </action>
+        
+    </package>
+</struts>
