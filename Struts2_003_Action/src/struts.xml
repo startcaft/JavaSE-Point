@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<!-- org.apache.struts2包下的default.properties文件中配置了一些常量，比如上传文件的大小，字符编码等 修改struts.action.extension的值，可以设置struts2拦截请求的扩展名 -->
+	<constant name="struts.action.extension" value="action,do,"></constant>
+
+	<package name="testActionContext" extends="struts-default"
+		namespace="/">
+
+		<action name="actionContext"
+			class="com.startcaft.struts2.action.TestActionContextAction" method="execute">
+
+			<result name="success" type="dispatcher">/testActionContext.jsp</result>
+
+		</action>
+
+		<action name="awareAction" class="com.startcaft.struts2.action.TestAwareAction"
+			method="execute">
+
+			<result name="success" type="dispatcher">/testActionContext.jsp</result>
+
+		</action>
+
+		<action name="servletAction"
+			class="com.startcaft.struts2.action.TestServletActionContext" method="execute">
+
+			<result name="success" type="dispatcher">/success.jsp</result>
+
+		</action>
+
+		<action name="servletAwareAction"
+			class="com.startcaft.struts2.action.TestServletAwareAction" method="execute">
+
+			<result name="success" type="dispatcher">/success.jsp</result>
+
+		</action>
+
+		<!-- com.opensymphony.xwork2.ActionSupport类 是一个Action默认的类,它包含一个execute()方法，并返回一个"success"； 
+			com.opensymphony.xwork2.ActionSupport实现了好多接口： 1，Action接口，定义了一个execute()方法和一些字符串常量 
+			2,Validateable接口,验证接口 3,ValidationAware接口，错误消息接口 4,TextProvider，LocaleProvider，国际化相关接口 
+			所以开发中，我们继承ActionSupport类会为编码带来便利 -->
+		<action name="login_ui">
+			<result>/login/login.jsp</result>
+		</action>
+		<action name="user_login" class="com.startcaft.struts2.action.UserLoginAction">
+			<result name="login-success">/login/login_success.jsp</result>
+		</action>
+		<action name="user-logout" class="com.startcaft.struts2.action.UserLoginAction"
+			method="logout">
+			<result name="login-success">/login/login.jsp</result>
+		</action>
+
+
+		<!-- result结果： -->
+		<action name="testResult" class="com.startcaft.struts2.action.TestResultAction">
+			<result name="success" type="dispatcher">/result/success.jsp</result>
+			<result name="login" type="redirect">/result/login.jsp</result>
+
+			<!-- 重定向到一个action <result name="index" type="redirectAction"> <param name="actionName">success</param> 
+				<param name="namespace">/startcaft</param> </result> -->
+			<!-- 可以使用 redirect 的便捷方式重定向到一个action -->
+			<result name="index" type="redirect">/startcaft/success</result>
+
+			<!-- 转到到一个action，不能使用type="dispatcher"的便捷方式 转发到一个action -->
+			<result name="test" type="chain">
+				<param name="actionName">success</param>
+				<param name="namespace">/startcaft</param>
+			</result>
+		</action>
+
+		<!-- 
+			使用通配符来配置action 
+			* 通配符配置action
+			1，精确定位比通配符定位更优先
+		-->
+		<action name="mul-*" class="com.startcaft.struts2.action.MulAction"
+			method="{1}">
+			<result name="{1}-success">/success.jsp</result>
+		</action>
+
+	</package>
+
+	<package name="testPackage" namespace="/startcaft" extends="struts-default">
+		<action name="success">
+			<result>/result/success.jsp</result>
+		</action>
+	</package>
+</struts>

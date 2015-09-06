@@ -1,0 +1,79 @@
+1，action 代表一个Structs2的请求
+
+2，Action类 代表一个能处理Strcuts2请求的类
+
+Action类：普通的Java类，可以有属性和方法，同时必须遵守以下这些规则：
+
+1，属性的名字必须遵守与JavaBeans属性名相同的命名规则；
+2，必须有一个不带参数的构造器；
+3，至少有一个供structs2在执行action时调用的方法；
+4，同一个Action类可以包含多个action方法；
+5，struts2会为每一个HTTP请求创建一个新的Action实例,即Action不是单例的，也是线程安全的，一个请求一个实例嘛；
+
+
+Struts2中Action的详解：：：：
+在Struts2Action部分，采用了低侵入的方式，如何理解呢？
+	因为Struts2中的Action类不需要继承任何的基类或者实现任何的接口，更没有与Servlet的API直接耦合
+	它就是一个普通的POJO；
+	
+在Action类中，即可以封装参数，又可以封装处理结果，系统并不会严格区分它们，
+但是为了使用户开发的Action类更规范，Struts2为开发者提供了一个Action接口，该类的定义如下：
+public interface Action{
+	public static final String ERROR="error";
+	public static final String INPUT="input";
+	public static final String NONE="none";
+	public static final String LOGIN="login";
+	public static final String SUCCESS="success";
+	
+	public String void execute() throws Exception;
+}
+
+在开发中我们不直接实现Action接口，而是继承Action接口的实现类ActionSupport类，
+该类提供了更多的功能，如表单域的校验，国际化等；
+
+Action类中访问web资源：
+在Action中，可以通过以下方式访问web的HttpSession，HttpServletRequest，HttpServletResponse
+等资源
+
+1，与Servlet API解耦的方式进行访问:只能访问到有限的方式，方便于单元测试
+	1-1，通过com.opensymphony.xwork2.ActionContext
+	1-2，通过Action实现如下接口：
+		org.apache.structs2.interceptor.ApplicationAware;
+		org.apache.structs2.interceptor.RequestAware;
+		org.apache.structs2.interceptor.SessionAware;
+
+2，与Servlet API耦合的方式进行访问
+	1-1，通过org.apache.structs2.ServletActionContext
+	1-2,通过实现对应的xxxAware接口
+	
+	
+***Structs2是不是能拦截所有的扩展名的请求呢？
+不是的，默认情况下，Structs2可以拦截.action或者没有扩展名的请求
+<constant name="struts.action.extension" value="action,do,"></constant>
+
+
+Structs2中的result：
+	result 表示一个 action 可能的请求结果目标;一个action可能会有多个result
+	<result>是<action>的子节点;
+	<result>有两个属性：1，name属性表示Action方法的返回值；2，type属性，结果类型
+	type的常用取值有：
+	1，dispatcher---转发，同Servlet中的一样
+	2，redirect---重定向，同Servlet中的一样
+	3，redirectAction---重定向到一个action
+	4，chian---转到到一个action
+	
+
+
+Structs2中的一个action对应一个请求，这样一来，一个功能模块就会有很多个action，一个项目的action就更多了，
+action过多不利于XML配置文件的维护，如果可以一个功能模块只配置一个action就好了，
+Structs2可以通过使用  * 通配符来映射action，完成一个功能模块对应只配置一个action；
+
+
+动态方法调用：了解即可，开发中不会这样用
+/struts-app/Login!save.action，这样可以直接调用Login类的save()方法；
+默认情况下，Struts2的动态方法调用处于禁用状态；
+配置以下常量来打开动态调用
+<constant name="struts.enable.DynamicMethodInvocation" value="true"></constant>
+
+	
+		
