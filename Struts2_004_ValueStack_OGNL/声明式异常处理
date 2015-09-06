@@ -1,0 +1,18 @@
+异常处理：exception-mapping元素
+1，exception-mapping元素
+	配置当前action的声明式异常处理，它包含两个属性：
+	1-1，exception属性：指定需要捕捉的异常类型；
+	1-2，result属性：指定一个响应结果，该结果将在捕获到异常时被执行，既可以来自当前的action的声明，
+		也可以来自  global-results 声明；
+
+2，也可以通过  global-exception-mapping 元素为应用程序提供一个全局性的异常处理，
+	但是在  global-exception-mapping 元素下声明的任何 exception-mapping 元素
+	只能引用在 global-results 元素下声明的某个 result 元素；
+
+3，声明式异常处理机制由 ExceptionMappingInterceptor 拦截器负责处理，
+	当某个 exception-mapping 元素声明的异常被捕获到时，
+	ExceptionMappingInterceptor拦截器就会像ValueStack中添加两个对象：
+	3-1，exception对象：表示被捕获异常的Exception对象；
+	3-2，exceptionStack对象：包含被捕获异常的栈；
+	
+***可以在视图上通过<s:property>标签显示异常消息

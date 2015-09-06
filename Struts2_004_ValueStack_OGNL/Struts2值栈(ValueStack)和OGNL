@@ -1,0 +1,82 @@
+1，Request接口在Struts2中被重新包装成org.apache.struts2.dispatcher.StrutsRequestWrapper类，
+	该类重写了public Object getAttribute(String key)方法,
+	从com.opensymphony.xwork2.util.ValueStack---值栈类中获取值
+
+2，com.opensymphony.xwork2.util.ValueStack类有两个重要部分组成：
+	2-1，Map<String, Object> getContext()属性，对当前Action对象的引用;
+		包含如下对象：
+		1，parameters：该Map中包含当前请求的请求参数；
+		2，request：该Map中包含当前request对象中的所有属性；
+		3，session：该Map中包含当前session对象中的所有属性；
+		4，application：该Map中包含当前application对象中的所有属性；
+		5，attr：该Map按照如下顺序来检索某个属性：request，session，application； 
+		
+	2-2，CompoundRoot getRoot()属性，一个继承自ArrayList的具有栈特性的集合(先进后出);
+		该对象包含当前Action的相关对象；
+	
+
+什么是OGNL？
+	在JSP页面上利用OGNL(Object-Graph-Navigation-Language:对象-图导航语言)访问到值栈(ValueStack)
+	里的对象属性；
+	【若希望访问值栈中ContexMap中的数据，需要给OGNL表达式加上一个前缀字符#】，
+	【如果没有前缀字符#，搜索将在ObjectStack里进行】；
+
+读取ContextMap里的对象的属性：
+	若想要访问ContextMap里的某个对象的属性，可以使用以下几种方式：
+	1，#object.propertyName;
+	2，#object['propertyName'];
+	3，#object["propertyName"];
+
+读取ObjectStack中对象的属性：
+	若想要读取ObjectStack里的某个对象的属性，可以使用以下几种方式：
+	1，object.propertyName;推荐使用这种方式
+	2，object['propertyName'];
+	3，object["propertyName"]
+	
+	我们已知ObjectStack是一个集合，我们可以通过下标索引来获取一个对象：
+	[n].propertyName
+	n 的含义是从n个元素来所检索，而不是只检索第 n 个元素
+	【若从栈定开始搜索，则可以省略掉下标：propertyName】
+	
+	【默认情况下，当前Action对象会被Struts2自动的放到ValueStack的ObjectStack栈的栈顶】；
+	
+	我们可以配合使用struts2的标签和OGNL表达式来获取值栈中的对象的属性:
+	导入struts2的标签：<%@ taglib perfix="s" uri="/struts-tags"%>
+	使用property标签取值:<s:property value="OGNL表达式">
+	
+	struts2也提供了一个debug标签来查看ValueStack的状态；
+	
+
+OGNL调用对象字段和方法：
+	1，可以利用OGNL任何一个Java类里的静态字段和方法；
+	2，也可以调用被压入ValueStack的对象上的公共字段和方法；
+	
+	默认情况下struts2不允许使用OGNL调用任何java类的静态方法和字段，需要重新设置常量：
+	<constant name="struts.ognl.allowStaticMethodAccess" value="true"></constant>
+	
+	调用静态字段和方法需要使用如下的语法：
+	1，@全类名@字段名
+	2，@全类名@方法名(参数列表)
+	
+	调用实例字段和方法的语法：
+	1，.对象.字段名
+	2，.对象.方法名(参数列表)
+	
+
+使用OGNL访问数组类型的属性：
+	1，可以使用下标访问数组中指定的元素：colors[0]
+	2，可以通过调用其length字段查出数组中多少个元素：colors.length
+
+使用OGNL访问List集合的属性：
+	1，可以使用下表访问List中指定的元素：colors[2]
+	2，可以通过调用其size方法或者专用关键字size的方法来获取List的长度：colors.size或者colors.size()
+	3，可以通过使用isEmpty()方法或者专用关键字isEmpty来判断一个List是否为空：colors.isEmpty或者colors.isEmpty()
+	4，可以使用OGNL表达式来创建List，与使用OGBL声明一个数组是相同的：{"元素1","元素2","元素3","元素4"}
+	
+使用OGNL访问Map集合的属性：
+	1，若希望检索一个Map的键，使用如下格式：Map[key] 
+	2，可以通过调用其size方法或者专用关键字size的方法来获取Map的长度
+	3，可以通过使用isEmpty()方法或者专用关键字isEmpty来判断一个Map是否为空
+	4，可以使用OGNL表达式来创建List，与使用OGBL声明一个数组是相同的：#{key1:value1,key2:value2}
+	
+***如果只是访问一个值，推荐使用EL；
