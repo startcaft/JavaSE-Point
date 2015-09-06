@@ -14,12 +14,34 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 	@Autowired
 	private DepartmentDao departDao;
+	
+	
 		
 	@Override
 	public List<Department> getRootDepartmentByApp(Integer appId) {
 		
-		String hql = "from Department d join d.application where d.application.id = ? and d.parent = NULL";
+		String hql = "select d from Department d where d.parent = NULL and d.application.id = ?";
 		List<Department> roots = departDao.findByHQL(hql,appId);
 		return roots;
 	}
+
+	@Override
+	public List<Department> getChildDepartmentByParent(Integer parentId) {
+		String hql = "select d from Department d where d.parent.id = ?";
+		List<Department> childs = departDao.findByHQL(hql, parentId);
+		return childs;
+	}
+
+	@Override
+	public boolean addDepartment(Department depart) {
+		
+		boolean result = false;
+		
+		departDao.save(depart);
+		
+		result = true;
+		
+		return result;
+	}
+	
 }

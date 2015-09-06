@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+	
+	<!-- 
+   	指定Spring IOC容器扫描的包 :
+   -->
+   <context:component-scan base-package="com.startcaft.permission"></context:component-scan>
+	
+	<!-- 导入外部属性文件 -->
+	<context:property-placeholder location="classpath:db.properties"/>
+	
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="user" value="${jdbc.user}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+        <property name="jdbcUrl" value="${jdbc.url}"></property>
+        <property name="driverClass" value="${jdbc.driverClass}"></property>
+        
+        <property name="initialPoolSize" value="${jdbc.initPoolSize}"></property>
+        <property name="maxPoolSize" value="${jdbc.maxPoolSize}"></property>
+	</bean>
+	
+	<!-- 配置Hibernate的  sessionFactory -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<!-- 注入数据源对象 -->
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 注入Hibernate的配置文件的路径 -->
+		<property name="configLocation" value="classpath:hibernate.cfg.xml"></property>
+		<!-- 注入Hibernate实体注解类的所在包 -->
+		<property name="packagesToScan" value="com.startcaft.permission.domain"></property>
+	</bean>
+	
+	<!-- 配置Spring的声明式事务 -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<!-- 注入 sessionFactory 对象-->
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<!-- 配置事务属性，设置ID，设置相关事务管理器 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+            <tx:method name="get*" read-only="true" propagation="REQUIRED" />
+            <tx:method name="select*" read-only="true" propagation="REQUIRED"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+	</tx:advice>
+	
+	<!-- 3，配置事务切点，并把切点与事务属性关联起来 -->
+    <aop:config>
+        <aop:pointcut expression="execution(* com.startcaft.permission.service.*.*(..))" id="txPointCut"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointCut"/>
+    </aop:config>
+
+</beans>
