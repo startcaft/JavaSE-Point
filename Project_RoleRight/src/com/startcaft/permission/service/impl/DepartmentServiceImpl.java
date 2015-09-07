@@ -42,5 +42,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 		result = true;
 		
 		return result;
-	}	
+	}
+
+	@Override
+	public Department getDepartmentInfo(Integer id) {
+		
+		Department department = departDao.findById(id);
+		
+		return department;
+	}
 }

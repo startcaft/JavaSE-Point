@@ -40,6 +40,15 @@ public class TestDeprtmentService {
 		}
 	}
 	
+	@Test
+	public void testGetDepartmentInfo(){
+		
+		Department depart = departService.getDepartmentInfo(1);
+		System.out.println(depart.getId());
+		System.out.println(depart.getName());
+		System.out.println(depart.isEnable());
+	}
+	
 	
 	@Test
 	public void testInsertDepart(){

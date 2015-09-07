@@ -22,7 +22,7 @@ public interface DepartmentService {
 	public List<Department> getChildDepartmentByParent(Integer parentId);
 	
 	
-	/***
+	/**
 	 * 添加部门信息
 	 * @param depart---Department对象
 	 * @param appId---应用程序ID，不可能为null
@@ -30,4 +30,10 @@ public interface DepartmentService {
 	 * @return 
 	 */
 	public boolean addDepartment(Department depart);
+	
+	/**
+	 * 获取一个部门的具体信息 
+	 * @param id
+	 */
+	public Department getDepartmentInfo(Integer id);
 }

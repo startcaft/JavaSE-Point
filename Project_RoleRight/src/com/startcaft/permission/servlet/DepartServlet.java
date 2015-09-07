@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.web.context.WebApplicationContext;
@@ -56,7 +57,82 @@ public class DepartServlet extends HttpServlet {
 			break;
 		case "add":
 			addDepartment(request,response);
+		case "update":
+			updateDepartment(request,response);	
+		case "get":
+			getDepartment(request,response);
 		}
+	}
+	
+	private void getDepartment(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		
+		response.setHeader("Content-type", "text/xml;charset=UTF-8"); 
+		String departId = request.getParameter("id");
+		Document document = DocumentHelper.createDocument();
+		Element departEle = document.addElement("Department");
+		
+		try {
+			Integer id = Integer.parseInt(departId);
+			Department depart = departService.getDepartmentInfo(id);
+			
+			Element idEle = departEle.addElement("id");
+			Element nameEle = departEle.addElement("name");
+			Element descEle = departEle.addElement("desc");
+			Element enableEle = departEle.addElement("isenable");
+			
+			idEle.addText(depart.getId().toString());
+			nameEle.addText(depart.getName());
+			descEle.addText(depart.getDesc() == null ? "" : depart.getDesc());
+			enableEle.addText(String.valueOf(depart.isEnable()));
+			
+		} catch (Exception e) {
+			Element error = departEle.addElement("error");
+			error.setText(e.getMessage());
+		}
+		
+		String xml = document.asXML();
+		response.getWriter().println(xml);
+	}
+	
+	/**
+	 * 修改部门信息，并返回XML文档 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void updateDepartment(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		
+		String name = request.getParameter("name");
+		String desc = request.getParameter("desc");
+		String pid = request.getParameter("pid");
+		String isenable = request.getParameter("isenable");//0为false,非0为true
+		
+		Department department = new Department();
+		
+		String returnVal = null;
+		
+		try {			
+			//获取根节点的部门信息,如果 pid>0 就认为是有父节点的，如果不是 则当前Department对象为根节点部门
+			Department parent = null;
+			if(Integer.parseInt(pid) > 0){
+				parent = new Department();
+				parent.setId(Integer.parseInt(pid));
+			}
+			department.setParent(parent);
+			
+			department.setName(name);
+			department.setDesc(desc);
+			department.setEnable(Boolean.valueOf(isenable));
+			
+			boolean result = departService.addDepartment(department);
+			returnVal = String.valueOf(result);
+			
+		} catch (Exception e) {
+			returnVal = "服务器异常";
+		}
+		
+		response.getWriter().print(XMLHelper.getMessageXml(returnVal));
 	}
 	
 	/**
@@ -181,7 +257,7 @@ public class DepartServlet extends HttpServlet {
 			}
 		} catch (Exception e) {
 			Element error = root.addElement("error");
-			error.setText("param of appid cast error");
+			error.setText(e.getMessage());
 		}
 		
 		String xml = document.asXML();
