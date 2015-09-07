@@ -14,6 +14,8 @@ import org.dom4j.Element;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.startcaft.permission.common.XMLHelper;
+import com.startcaft.permission.domain.Application;
 import com.startcaft.permission.domain.Department;
 import com.startcaft.permission.service.DepartmentService;
 
@@ -36,13 +38,72 @@ public class DepartServlet extends HttpServlet {
 		departService = context.getBean(DepartmentService.class);
 		
 		String action = request.getParameter("action");
+		
+		//action为空时的提示信息
+		if(action == null){
+			response.setHeader("Content-type", "text/xml;charset=UTF-8"); 
+			String xml = XMLHelper.printlnErrorElement("没有指定的请求目标");
+			response.getWriter().println(xml);
+			return;
+		}
+		
 		switch (action) {
 		case "query":
 			query(request, response);
 			break;
 		case "queryChild":
 			queryChild(request,response);
+			break;
+		case "add":
+			addDepartment(request,response);
 		}
+	}
+	
+	/**
+	 * 添加一个新的部门,并生成XML文档
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void addDepartment(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		
+		String appid = request.getParameter("appid");
+		String name = request.getParameter("name");
+		String desc = request.getParameter("desc");
+		String pid = request.getParameter("pid");
+		String isenable = request.getParameter("isenable");//0为false,非0为true
+		
+		Department department = new Department();
+		
+		String returnVal = null;
+		
+		try {
+			//获取相关联的应用程序信息
+			Application app = new Application();
+			app.setId(Integer.parseInt(appid));
+			department.setApplication(app);
+			
+			//获取根节点的部门信息,如果 pid>0 就认为是有父节点的，如果不是 则当前Department对象为根节点部门
+			Department parent = null;
+			if(Integer.parseInt(pid) > 0){
+				parent = new Department();
+				parent.setId(Integer.parseInt(pid));
+			}
+			department.setParent(parent);
+			
+			department.setName(name);
+			department.setDesc(desc);
+			department.setEnable(Boolean.valueOf(isenable));
+			
+			boolean result = departService.addDepartment(department);
+			returnVal = String.valueOf(result);
+			
+		} catch (Exception e) {
+			returnVal = "服务器异常";
+		}
+		
+		response.getWriter().print(XMLHelper.getMessageXml(returnVal));
 	}
 	
 	/**
