@@ -42,6 +42,5 @@ public class DepartmentServiceImpl implements DepartmentService {
 		result = true;
 		
 		return result;
-	}
-	
+	}	
 }

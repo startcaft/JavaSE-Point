@@ -6,6 +6,7 @@ import com.startcaft.permission.domain.Department;
 
 public interface DepartmentService {
 	
+	
 	/**
 	 * 根据AppId获取应用程序的所有根节点的部门
 	 * @param appId---应用程序ID

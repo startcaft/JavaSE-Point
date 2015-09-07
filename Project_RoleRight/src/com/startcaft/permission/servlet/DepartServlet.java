@@ -35,36 +35,105 @@ public class DepartServlet extends HttpServlet {
 		context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 		departService = context.getBean(DepartmentService.class);
 		
+		String action = request.getParameter("action");
+		switch (action) {
+		case "query":
+			query(request, response);
+			break;
+		case "queryChild":
+			queryChild(request,response);
+		}
+	}
+	
+	/**
+	 * 生成子节点部门信息XML文档
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void queryChild(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		
+		response.setHeader("Content-type", "text/xml;charset=UTF-8"); 
+		Document document  = DocumentHelper.createDocument();
+		//根节点---departments
+		Element root = document.addElement("departments");
+		
+		String id = request.getParameter("pid");
+		Integer parentId = 0;
+		try {
+			parentId = Integer.valueOf(id);
+			List<Department> roots = departService.getChildDepartmentByParent(parentId);
+			if(roots != null && roots.size() > 0){
+				for (Department department : roots) {
+					
+					//一级节点---depart
+					Element depart = root.addElement("depart");
+					
+					Element departId = depart.addElement("id");
+					departId.setText(department.getId().toString());
+					
+					Element name = depart.addElement("name");
+					name.setText(department.getName());
+				}
+			}
+		} catch (Exception e) {
+			Element error = root.addElement("error");
+			error.setText("param of appid cast error");
+		}
+		
+		String xml = document.asXML();
+		response.getWriter().println(xml);
+	}
+	
+	/**
+	 * 查询生成根节点部门信息XML文档
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void query(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		
+		response.setHeader("Content-type", "text/xml;charset=UTF-8"); 
+		Document document  = DocumentHelper.createDocument();
+		//根节点---departments
+		Element root = document.addElement("departments");
+		
 		String id = request.getParameter("appid");
 		Integer appId = 0;
 		try {
 			appId = Integer.valueOf(id);
 			List<Department> roots = departService.getRootDepartmentByApp(appId);
-			response.setHeader("Content-type", "text/xml;charset=UTF-8"); 
-			String xml = this.writerRootDepartXml(response, roots);
-			response.getWriter().println(xml);
+			if(roots != null && roots.size() > 0){
+				for (Department department : roots) {
+					
+					//一级节点---depart
+					Element depart = root.addElement("depart");
+					
+					Element departId = depart.addElement("id");
+					departId.setText(department.getId().toString());
+					
+					Element name = depart.addElement("name");
+					name.setText(department.getName());
+				}
+			}
 		} catch (Exception e) {
-			response.getWriter().println("no support app");
+			Element error = root.addElement("error");
+			error.setText("param of appid cast error");
 		}
+		
+		String xml = document.asXML();
+		response.getWriter().println(xml);
 	}
 	
-	private String writerRootDepartXml(HttpServletResponse response,List<Department> list) throws ServletException, IOException{
-		
-		Document document  = DocumentHelper.createDocument();
-		//根节点---departments
-		Element root = document.addElement("departments");
-		for (Department department : list) {
-			
-			//一级节点---depart
-			Element depart = root.addElement("depart");
-			
-			Element id = depart.addElement("id");
-			id.setText(department.getId().toString());
-			
-			Element name = depart.addElement("name");
-			name.setText(department.getName());
-		}
-		
-		return document.asXML();
-	}
+//	private void prtitNode(Department depart){
+//		if(depart == null){return;}
+//		System.out.println(depart.getName() + " : [childsize:" + depart.getChildren().size() + "]");
+//		Set<Department> children = depart.getChildren();
+//		for(Iterator<Department> it = children.iterator();it.hasNext();){
+//			Department child = it.next();
+//			prtitNode(child);
+//		}
+//	}
 }
