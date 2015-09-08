@@ -1,0 +1,20 @@
+双向一对一主键关联关系:意思为从表的主键ID值参照主表的主键ID值
+两方都持有对象的一个引用的属性，
+	1，在主表方使用@OneToOne,@PrimaryKeyJoinColumn注解
+		@PrimaryKeyJoinColumn只能写在生成ID的一方，也就主表方；
+		
+	2，在从表放的ID字段上使用
+		@Id
+		@GenericGenerator(name="pkGenerator",strategy="foreign",parameters={@Parameter(name="property",value="property name of the primary Object reference")})
+		@GeneratedValue(generator="pkGenerator")
+		
+		GenericGenerator注解表示一个主键生成策略，命名为name属性的值，strategy="foreign",parameters={@Parameter(name="property",value="husband")},表示生成一个外键
+		外键字段的值参照主表对象引用的属性的属性名。它是一个类型为org.hibernate.annotations.GenericGenerator的注解，JPA的注解有点BUG；
+		GeneratedValue(generator="pkGenerator")，指定一个主键生成策略；
+		
+		在主表对象引用的属性上使用@OneToOne(cascade=CascadeType.ALL,mappedBy="wife")注解，mappedBy属性一定要加，表示关联关系交给主表对象来维护；
+
+
+这种映射关系不是很常用，一般都用一对一外键关联
+		
+	

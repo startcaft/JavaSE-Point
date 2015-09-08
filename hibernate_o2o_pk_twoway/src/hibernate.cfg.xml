@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+		
+<hibernate-configuration>
+    <session-factory>
+        
+        <!-- 数据库连接信息 -->
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/hibernate</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password">5904395</property>
+        
+        <property name="connection.pool_size">1</property>
+        
+        <!-- 数据库方言配置 -->
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        
+        <!-- 
+        	Session存储的上下文位置。
+        	一般使用 Thread(当前线程中如果有session，则返回，没有则创建。getCurrentSession。)。
+        	jta用作分布式系统。管理分布式事务。java transaction api
+         -->
+        <property name="current_session_context_class">thread</property>
+        
+        <!-- 是否在控制台显示SQL语句 -->
+        <property name="show_sql">true</property>
+        
+        <!-- 输出格式化后的sql,更方便查看   -->
+        <property name="hibernate.format_sql">true</property> 
+
+        <!-- 是否自动生成数据库模型 -->
+        <property name="hbm2ddl.auto">update</property>
+        
+        <!-- 导入实体配置文件 -->
+        <mapping class="com.startcaft.hibernate.entity.Husband"/>
+		<mapping class="com.startcaft.hibernate.entity.Wife"/>
+                
+    </session-factory>
+</hibernate-configuration>
