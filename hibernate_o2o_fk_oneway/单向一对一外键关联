@@ -1,0 +1,42 @@
+单向一对一外键关联：意为从表持有一个主表ID的外键引用，外键字典为主表的主键ID值
+
+1，主表方持有一个从表方对应的一个引用，在引用的属性上使用
+	@OneToOne(cascade=CascadeType.ALL,fetch=FetchType.LAZY,optional=true)
+		注意@OneToOne注解的optional属性，它表示是否允许从表的外键字段的值为null；
+	@JoinColumn(unique=true,name="student_card_id")
+		JoinColumn注解的name属性表示生成的外键的列名，unique属性表示外键字段的值是否唯一，一定要唯一，不然就不是一对一了；
+
+
+/*
+ * 数据库表之间的关系只有 【外键关系】
+ * 
+ * 这里所说的关系是 对象 与 对象 之间的关联关系是：数量关系
+ * 
+ * 数量关系分为三种：1，一对一；2，一对多；3多对多
+ * 
+ * 
+ * 一对一关联有三种情况：
+ * 1，关联的对象都共享相同的主键；
+ * 2，一个对象通过外键关联到另外一个对象的主键；
+ * 3，通过中间关联表来保存两个对象之间的关系(不重要)；
+ */
+
+
+/*
+ * @OneToOne建立对象之间的一对一的关联
+ * 
+ * cascade：级联策略，即，当对主对象对某种操作时，是否对其相关的子对象也做相应的操作。可选值5个：
+ * ----CascadeType.ALL			囊过一下四项
+ * ----CascadeType.MERGE		级联更新
+ * ----CascadeType.REFRESH		级联刷新
+ * ----CascadeType.REMOVE		级联删除
+ * ----CascadeType.PERSIST		级联新建
+ * 
+ * fetch：抓取策略，它有2个可选值：
+ * ----FetchType.LAZY		延迟抓取(延迟抓取能够保证应用只有在需要的时候才去数据库抓取相应的数据记录)
+ * ----FetchType.EAGER		立即抓取
+ * 
+ * @JoinColumn 用来设置外键的名称，如果没有设置该注解，则外键使用默认名称，规则是：关联的类的短类名(首字母小写，不带包名)_id。
+ * ----name属性		设置外键名称
+ * ----unique属性	设置唯一约束
+ */
