@@ -1,0 +1,15 @@
+一对多，多对一双向关联关系：
+1，在one的一方持有一个many方的Set<T>集合属性，并使用@OneToMany(mappedBy="property name of one's Object in the Many ")注解，
+	【只有OneToOne,OneToMany,ManyToMany上才有mappedBy属性】,
+	mappedBy属性值为在many方中对one的引用的属性名，它表示了两者关联关系，交给many放来维护；
+	【one个总统，Many个子民，让一个总统记住每个子民那是不可能的，让每个子民记住这一个总统】；
+	
+2，在many的一方持有一个one方的引用的属性，并使用@ManyToOne注解，
+	@JoinColumn(name="groupId")用来生成引用关系的关联外键字段。
+	
+
+在执行save操作的时候，必须先持久化one方的一个对象，才能save成功many放的对象，因为one方不持久化，其状态就是Transient状态，就没有OID；
+
+***persistent状态的对象不能引用Transient状态的对象；
+***利用Cascade属性是解决TransientObjectException一场的一种手段；
+***注意：：：Cascade只是帮我们省去了硬编码的麻烦而已，不要把它的作用过度放大
