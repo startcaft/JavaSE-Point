@@ -1,0 +1,26 @@
+Hibernate中的对象有三种状态： 瞬时状态 (Transient)，持久状态 (Persistent)，脱管状态 (Detached)
+
+1，瞬时状态 (Transient)
+	当通过java的new关键字来生成一个实体对象时，它处于Transient状态，它只是通过JVM获得了一块内存空间。
+	(1)不和Session实例关联
+	(2)数据库中没有对应的记录
+	
+2，持久状态 (Persistent)
+	持久化对象就是已经被保存进数据库的实体对象，并且这个实体对象还处于Hibernate的缓存管理之中，
+	对该实体对象的任何修改，都会在清理缓存时同步到数据库中；
+	(1)在数据库中都对应的记录，并且拥有一个持久化标识OID；
+	(2)总是与Session和Transaction先关联，在同步之前的持久对象称为脏数据
+	
+	1-1，通过Session的save()和saveOrUpdate()方法把一个Transient对象与数据库相关联，它就成为Persistent对象
+
+	1-2，使用fine(),get(),load()和iterator()等方法查询到的数据对象，也是持久化对象；
+
+3，脱管状态 (Detached)
+	当一个持久化对象，脱离开Hibernate的缓存管理后，它就处于游离状态，它与Transient最大的区别就是，
+	Detached对象在数据库中有对应的记录；
+	当session关闭后，持久化对象就不处于Hibernate的缓存管理之中了。
+	
+	1-1，通过Session的close()或clear(),evict()之后，持久化对象称为托管对象。
+	
+	Detached转Persistent：
+		通过Session的update(),saveOrUpdate()和lock等方法，把托管对象变成持久化对象；

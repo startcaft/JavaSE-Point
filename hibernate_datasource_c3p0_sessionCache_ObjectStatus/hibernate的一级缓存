@@ -1,0 +1,21 @@
+在Hibernate的Session接口的实现类中包含了一系列的Java集合，这些Java集合构成了Session缓存，
+主要Session的实例没有结束，【并且没有强制的清楚缓存】。则存放在Session缓存中的对象也不会被清楚，
+这个位于Session的缓存被称为Hibernate的一级缓存。
+
+Hibernate提供了三种方法来对Session缓存进行操作：
+1，flush()
+	会强制同步数据库中的数据与Session缓存中的对象；
+	为了同步数据，可能会发出多条update语句；
+	注意：
+		1，在未提交事务或者显示的调用session.flush()方法之前，也有可能进行flush()操作；
+		2，执行HQL或者QBC查询，会先进行flush操作，以获取数据表的最新数据；
+		3，若记录的ID 是由底层数据库使用自增的方式生成的，则在调用以后save()
+	 		方法以后，就会立即发送insert语句。因为save方法后，必须保证对象的ID是存在的!
+	
+2，clear()
+	清理Session缓存
+	
+3，refresh()
+	会强制发送select语句，以保证Session缓存中对象和数据库表中对应的记录保持一致；
+	如果没有更新缓存中的对象状态，请在hibernate.cfg.xml配置文件中设置事物隔离级别
+	<property name="hibernate.connection.isolation">2</property>
