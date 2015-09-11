@@ -1,0 +1,16 @@
+整合目标：
+	使 IOC容器里来管理Struts2中的Action
+	
+如何整合：
+	1，Struts2的jar包，以及核心Filter的配置
+	
+	2，在Spring 的 IOC容器中配置Struts2的Action
+		在配置Struts2的Action时，需要配置scope属性，其值必须为"prototype"，即非单例的(默认是单例的)
+		以保证每一次请求一个Action实例
+	
+	3，配置Struts2的配置文件
+		Spring整合Struts2时，在Struts2的配置文件中配置Action时，<action>元素的class属性不在使用全类名(否则，Action就是Struts2来生成的)，
+		转而配置成Action类在Spring配置文件中的bean的id；
+		
+	4，最后需要加入一个额外的jar包
+		struts2-spring-plugin-2.3.24.jar

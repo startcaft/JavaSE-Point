@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- 
+		在配置Struts2的Action时，需要配置scope属性，其值必须为"prototype"，即非单例的
+		以保证每一次请求一个Action实例
+	 -->
+	<bean id="personAction" class="com.startcaft.action.PersonAction" scope="prototype">
+		<property name="personSrevice" ref="personService"></property>
+	</bean>
+	<bean id="personService" class="com.startcaft.service.PersonService"></bean>
+
+</beans>
