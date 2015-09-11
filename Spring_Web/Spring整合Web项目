@@ -1,0 +1,38 @@
+整合的思路以及步骤：
+1，Spring如何在Web应用中使用？
+
+	1-1，需要加入额外的jar包
+	spring-web-4.0.0.RELEASE.jar
+	spring-webmvc-4.0.0.RELEASE.jar
+	
+	1-2，Spring的配置文件，有什么不同:
+		和 非Web环境没什么不同
+	
+	1-3，如何创建IOC容器
+		(1)非 Web 应用 在main方法中直接创建；
+		(2)Web应用 应该在Web应用加载时就创建IOC容器：
+			在ServletContextListener监听接口中的contextInitialized(ServletContextEvent sce)方法创建IOC 容器；
+		
+		(3)在Web应用的其他组件中如何访问IOC容器：
+			在在ServletContextListener监听接口中的contextInitialized(ServletContextEvent sce)方法创建IOC 容器之后，
+			可以把IOC容器放在ServletContext中的一个属性中；
+			
+		(4)实际上，Spring配置文件的名字和位置也是可配置的：
+			将其配置到当前Web应用的初始化参数中较为合适
+			
+
+2，Spring API中提供了一个ServletContextListener接口的实现类来完成以上的工作：
+	org.springframework.web.context.ContextLoaderListener
+	
+	(1)可以使用WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE常量作为属性的键来获取 application作用域中 IOC容器的引用；
+	
+	(2)但是推荐使用WebApplicationContextUtils.getWebApplicationContext(ServletContex context)方法来获取IOC容器的引用;
+	
+	(3)最终的web.xml文件的配置
+	<context-param>
+    	<param-name>contextConfigLocation</param-name>
+    	<param-value>classpath:application.xml</param-value>
+  	</context-param>
+  	<listener>
+    	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  	</listener>
