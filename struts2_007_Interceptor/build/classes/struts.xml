@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<package name="struts2" namespace="/" extends="struts-default">
+	    
+	    <!-- 配置拦截器 -->
+	    <interceptors>
+	        <interceptor name="myInterceptor" class="com.startcaft.struts2.interceptor.MyInterceptor">
+	            <param name="hello">world</param>
+	        </interceptor>
+	    </interceptors>
+			    
+		<action name="emp-*" class="com.startcaft.struts2.action.EmployeeAction"
+			method="{1}">
+			<result name="{1}">/emp-{1}.jsp</result>
+			<result name="success" type="redirectAction">emp-list</result>
+			<!-- 引用上面配置的拦截器 -->
+			<interceptor-ref name="myInterceptor">
+			    <param name="hello">startcaft</param>
+			</interceptor-ref>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+	</package>
+
+</struts>
