@@ -1,0 +1,57 @@
+Struts2拦截器：
+1，Struts2拦截器就是一个类，实现了Interceptor接口的一个类。
+2，Struts2拦截器和Servlet中的Filter有类似功能，
+	从字面意思来看，Struts2拦截器就是在目标对应执行之前或之后做一些事情，
+	其实Struts2的拦截器的实现也是一样，在具体Action的被调用之前和之后可以做一些操作，并采用配置化的方法进行管理，使用起来简单。
+	
+3，拦截器采用了动态代理模式实现在目标执行的前后插入必要的辅助业务，其采用的是一种AOP的思想，来降低系统耦合,
+	具体，请参照com.startcaft.interceptor.aop包下面的实例片段。
+	
+4，在Struts2中拦截器存在两种概念，一种是拦截器，一种是拦截器栈(一系列的拦截器连接在一起对目标进行拦截)，
+	而Struts2并没有把两种概念进行区别，而是把他们都当成拦截器对待,
+	因此在拦截器的定义标签<interceptors></interceptors>中，定义，引用拦截器和拦截器栈是同样的方式。
+	
+5，Struts2中自定义拦截器：
+	(1)首先定义一个类，且实现com.opensymphony.xwork2.interceptor.Interceptor接口
+	
+	(2)在struts.xml配置文件中，使用<interceptors>标签配置拦截器：
+		<interceptros>
+			<interceptor name="定义一个拦截器名" class="拦截器类的全类名">
+				<param name="参数名">参数值</param>
+			</interceptor>
+		</interceptros>
+		
+	(3)Struts2默认会为每个Action应用一个默认的拦截器栈，这个拦截器栈是在struts-default.xml文件中配置的，
+		当我们为一个Action配置了一个自定义拦截器时，默认的拦截器栈就会失效，但是Struts2本身的一些功能又都是依赖默认拦截器实现的，
+		所以应用程序会出错。这时需要我们手动将默认的拦截器栈引用进来，再为这项Action加入默认拦截器栈
+		<action name="action名称" class="action全类名" method="方法名">
+			<interceptor-ref name="loginInter">
+        	    <param name="includeMethods">login</param>
+        	</interceptor-ref>
+			<interceptor-ref name="defaultStack"/>
+		<action>
+		
+	(4)为了简便期间，还可以定义一个拦截器栈，前面说过，拦截器栈和拦截器是一样的：
+		<package name="struts2" extends="struts-default">
+	        <!-- 配置拦截器 -->
+	        <interceptors>
+	            <!-- 自定义拦截链 -->
+	            <interceptor-stack name="myStack">
+	                <!-- 执行顺序与配置顺序有关 -->
+	                <interceptor-ref name="myInterceptor" class="com.snt.struts2.interceptors.MyInterceptor"></interceptor-ref>
+	                <interceptor-ref name="myInterceptor2" class="com.snt.struts2.interceptors.MyInterceptor2"></interceptor-ref>
+	                <interceptor-ref name="defaultStack"></interceptor-ref>
+	            </interceptor-stack>
+	        </interceptors>
+	        <!-- 设置默认拦截链,一个package下只能配置一个,应用所有的默认配置拦截器或拦截链的Action -->
+	        <default-interceptor-ref name="myStack"></default-interceptor-ref>
+	 
+	        <action name="point" class="com.snt.struts2.action.PointAction">
+	            <result name="success">output.jsp</result>
+	        </action>
+	    </package>
+	    上面配置了了一个拦截器栈，但是并没写在任何的<action>下，因为配置了一个默认的拦截器栈；
+    
+    (5)需要注意的是，当一个action引用了其他的拦截器或拦截器栈时，我们定义的拦截器也会失效，而且默认的拦截器一个包只能声明一个，
+    	还有：定义多个拦截器后它们是有顺序执行的，顺序在配置时就决定好了。
+		
